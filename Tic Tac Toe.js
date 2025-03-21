@@ -1,4 +1,4 @@
-// On crée une fonction constructor GameBoard afin d'y mettre un tableau 
+// On crée une fonction constructor Gameboard afin d'y mettre un tableau 
 // qui va contenir notre gameboard
 function Gameboard() {
     const row = 3;
@@ -49,7 +49,7 @@ function Gameboard() {
 
 // On crée notre fonction constructor Cell()
 // valeur de cell à 0 pour les cell vide
-// et à 1 pour player1 1 puis 2 pour player2
+// et à 1 pour player1 puis 2 pour player2
 function Cell() {
 
     let value = 0;
@@ -79,11 +79,11 @@ function GameController(
     const player = [
         {
             name: playerOneName,
-            token: 1
+            token: "X"
         },
         {
             name: playerTwoName,
-            token: 2
+            token: "O"
         }
     ];
 
@@ -152,19 +152,16 @@ function GameController(
     return {
         playRound,
         getActivePlayer,
-        getBoard: board.getBoard
+        getBoard: board.getBoard,
+        checkWinner
     };
 }
 
-// Sert à créer une nouvelle aprtie en initialisant GameController 
-// et nous donne accès aux fonctions principales pour gérer la partie
-const game = GameController();
-
 
 function ScreenController() {
-    const game = GameController();
     const playerTurnDiv = document.querySelector(".turn");
     const boardDiv = document.querySelector(".board");
+    const winnerDisplay = document.querySelector(".winner-display");
 
     const updateScreen = () => {
         boardDiv.textContent = "";
@@ -187,19 +184,29 @@ function ScreenController() {
         });
     };
 
+    function displayWinner() {
+        if (game.checkWinner(game.getBoard(), game.getActivePlayer().token)) {
+            winnerDisplay.innerText = `the winner is ${game.getActivePlayer().name} !`
+        }
+
+    }
+
     function clickHandleBoard(e) {
-        const selectedRow = e.target.dataset.row;
-        const selectedColumn = e.target.dataset.column;
+        const selectedRow = parseInt(e.target.dataset.row);
+        const selectedColumn = parseInt(e.target.dataset.column);
         if (selectedRow === undefined || selectedColumn === undefined) return;
 
         game.playRound(selectedRow, selectedColumn);
         updateScreen();
+        displayWinner();
     }
 
     boardDiv.addEventListener("click", clickHandleBoard);
+
 
     updateScreen();
 
 };
 
+const game = GameController();
 ScreenController();
