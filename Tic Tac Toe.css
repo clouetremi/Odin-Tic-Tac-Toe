@@ -12,3 +12,8 @@
     align-items: center;
     justify-content: center;
 }
+
+.btn-restart-game{
+    margin: 2rem;
+    margin-left: 4rem;
+}

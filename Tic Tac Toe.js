@@ -105,6 +105,7 @@ function GameController(
         return false;
     }
 
+
     printNewRound();
 
     return {
@@ -120,6 +121,7 @@ function ScreenController() {
     const playerTurnDiv = document.querySelector(".turn");
     const boardDiv = document.querySelector(".board");
     const winnerDisplay = document.querySelector(".winner-display");
+    const btnRestartGame = document.querySelector(".btn-restart-game");
 
     const updateScreen = () => {
         boardDiv.textContent = "";
@@ -142,14 +144,12 @@ function ScreenController() {
         });
     };
 
-    function displayWinner() {
-        if (game.checkWinner(game.getBoard(), game.getActivePlayer().token)) {
-            winnerDisplay.innerText = `the winner is ${game.getActivePlayer().name} !`
-        }
 
-    }
+    let gameOver = false;
 
     function clickHandleBoard(e) {
+        if (gameOver) return;
+
         const selectedRow = parseInt(e.target.dataset.row);
         const selectedColumn = parseInt(e.target.dataset.column);
         if (selectedRow === undefined || selectedColumn === undefined) return;
@@ -159,6 +159,21 @@ function ScreenController() {
         displayWinner();
     }
 
+    function displayWinner() {
+        if (game.checkWinner(game.getBoard(), game.getActivePlayer().token)) {
+            winnerDisplay.innerText = `the winner is ${game.getActivePlayer().name} !`
+        } else if (game.getBoard().flat().every(cell => cell.getValue() !== 0)) {
+            winnerDisplay.innerText = "It's a draw!";
+            gameOver = true;
+        };
+    };
+
+    btnRestartGame.addEventListener("click", () => {
+        game = GameController();
+        updateScreen();
+        winnerDisplay.innerText = "";
+    });
+
     boardDiv.addEventListener("click", clickHandleBoard);
 
 
@@ -166,5 +181,7 @@ function ScreenController() {
 
 };
 
-const game = GameController();
+
+
+let game = GameController();
 ScreenController();
